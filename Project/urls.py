@@ -13,5 +13,11 @@ from Project import views
 urlpatterns = [
     path('', index),
     # 如果为类视图,path第二个参数为类视图名
-    path('index',views.Indexview.as_view())
+    # path('index',views.Indexview.as_view()),
+
+    #int 为路径参数转化器
+    #:左边为转化器，右边为参数别名
+    # int,slug,uuid
+    path('<int:pk>/',views.Indexview.as_view()),
+    path('study',views.studyview.as_view())
 ]
