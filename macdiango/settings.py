@@ -80,8 +80,18 @@ WSGI_APPLICATION = 'macdiango.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #配置数据库引擎
+        'ENGINE': 'django.db.backends.mysql',
+        #指定数据库名称
+        'NAME': 'my_diango',
+        #数据库用户名
+        'USER': 'zroot',
+        #数据库密码
+        'PASSWORD': 'Zzz123456.',
+        #数据库地址
+        'HOST' : '47.94.80.48',
+        #指定端口
+        'PROT' : 3306 ,
     }
 }
 
