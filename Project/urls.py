@@ -1,6 +1,6 @@
 
 from django.urls import path
-from  Project.views import index
+from Project.views import index
 from Project import views
 
 #子路由配置信息
