@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     # 子应用名。apps.子应用名首字母大写加Config
     'Project.apps.ProjectConfig',
     'Project2.apps.Project2Config',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

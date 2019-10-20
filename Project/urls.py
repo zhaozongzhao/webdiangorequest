@@ -11,13 +11,17 @@ from Project import views
 # 如果匹配不上会抛出一个404（默认404页面，状态404）
 
 urlpatterns = [
-    path('', index),
+    # path('', index),
     # 如果为类视图,path第二个参数为类视图名
     # path('index',views.Indexview.as_view()),
 
     #int 为路径参数转化器
     #:左边为转化器，右边为参数别名
     # int,slug,uuid
-    path('<int:pk>/',views.Indexview.as_view()),
-    path('study',views.studyview.as_view())
+    # path('<int:pk>/',views.Indexview.as_view()),
+    # path('study',views.studyview.as_view()),
+    path('',views.ProjectsView.as_view()),
+    path('project/',views.ProjrctViewserializers.as_view()), #序列换器
+    path('project/<int:pk>/',views.ProjrctView2.as_view()),
+    path('project1/<int:pk>',views.ProjrctViewserializers2.as_view()), #序列化器
 ]
