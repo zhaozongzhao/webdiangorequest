@@ -15,6 +15,7 @@ from Project.models import Projects, Person
 from Project.serializer import ProjectSerializer, ProjectModelSerializer
 #导入过滤引擎
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins
 
 
 # Create your views here.
@@ -246,7 +247,7 @@ class studyview(View):
         return HttpResponse('<h1>星星<h1>')
 
 
-class ProjectsView(GenericAPIView):
+class ProjectsView(mixins.ListModelMixin,mixins.CreateModelMixin,GenericAPIView):
 
 
     # 指定查询集合（所有的查询数据）
@@ -260,24 +261,25 @@ class ProjectsView(GenericAPIView):
     #对特定的筛选字段
     filterset_fields = ['name', 'leader']
 
-    def get(self, request):
+    def get(self, request,*args, **kwargs):
 
-        project_qs = self.get_queryset()
-        '''
-         序列化器如果返回多条数据 需要添加：many=True
-        '''
-        project_qs = self.filter_queryset(project_qs)  # 过滤查询集
+        # project_qs = self.get_queryset()
+        # '''
+        #  序列化器如果返回多条数据 需要添加：many=True
+        # '''
+        # project_qs = self.filter_queryset(project_qs)  # 过滤查询集
+        #
+        # page = self.paginate_queryset(project_qs) #使用paginate_queryset进行分页操作，返回分页之后的查询集
+        #
+        # if page is not None:
+        #     serialier = self.get_serializer(instance=page, many=True)
+        #     #使用self.get_paginated_response 返回
+        #     return  self.get_paginated_response(serialier.data)
+        # serialier = self.get_serializer(instance=project_qs, many=True)
+        # return Response(serialier.data)
+        return  self.list(request,*args,**kwargs)
 
-        page = self.paginate_queryset(project_qs) #使用paginate_queryset进行分页操作，返回分页之后的查询集
-
-        if page is not None:
-            serialier = self.get_serializer(instance=page, many=True)
-            #使用self.get_paginated_response 返回
-            return  self.get_paginated_response(serialier.data)
-        serialier = self.get_serializer(instance=project_qs, many=True)
-        return Response(serialier.data)
-
-    def post(self, request):
+    def post(self, request,*args, **kwargs):
 
         '''
         新增项目
@@ -290,31 +292,32 @@ class ProjectsView(GenericAPIView):
         1.请求实例方法，第二个参数request为Request对象，是对Django中HTTPRequest扩展
         """
 
-        # 反序列化
-        serializer = ProjectSerializer(data=request.data)
-        """
-        #校验前端输入的数据
-        1，校验输入的数据，调用is_valid()才开始校验前端输入的数据，成功Treu 失败False
-        2，raise_exception=True 校验失败会抛出异常，成功Treu
-        3，当调用is_valid 用 serializer.errors 获取错误信息
-        4. 校验成功的数据 用serializer.validated_data 获取
-        """
-        try:
-            serializer.is_valid(raise_exception=True)
-        except Exception as e:
-            return Response(serializer.errors)
-
-        # 使用序列化器代替创建数据
-        """
-        1,如果调用序列化期中只给data传参，那么serializer.save()实际调用的是序列化期中的create()
-        """
-        serializer.save()
-
-        return Response(serializer.data, status=201)
+        # # 反序列化
+        # serializer = ProjectSerializer(data=request.data)
+        # """
+        # #校验前端输入的数据
+        # 1，校验输入的数据，调用is_valid()才开始校验前端输入的数据，成功Treu 失败False
+        # 2，raise_exception=True 校验失败会抛出异常，成功Treu
+        # 3，当调用is_valid 用 serializer.errors 获取错误信息
+        # 4. 校验成功的数据 用serializer.validated_data 获取
+        # """
+        # try:
+        #     serializer.is_valid(raise_exception=True)
+        # except Exception as e:
+        #     return Response(serializer.errors)
+        #
+        # # 使用序列化器代替创建数据
+        # """
+        # 1,如果调用序列化期中只给data传参，那么serializer.save()实际调用的是序列化期中的create()
+        # """
+        # serializer.save()
+        #
+        # return Response(serializer.data, status=201)
+        return self.create(request,*args, **kwargs)
 
 
 # 需要继承GenericAPIView
-class ProjrctView2(GenericAPIView):
+class ProjrctView2(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,GenericAPIView):
     # 必须指定queryset和serializer_class
 
     queryset = Projects.objects.all()  # 用于指定需要使用的查询集
@@ -335,36 +338,40 @@ class ProjrctView2(GenericAPIView):
     #如果使用不是pk可以自定义lookup_field，可以修改
     # lookup_field = 'id'
 
-    def get(self, request, pk):
+    def get(self, request, *args, **kwargs):
+        #
+        # project = self.get_object()  # 使用get_object()不需要自定义
+        #
+        # """
+        #  1.通过模型类对象（或者查询集），传给Instance可进行序列化操作
+        #  2.通过序列化serializer对象data属性，就可以获取转换之后的字典
+        # """
+        # serializer = self.get_serializer(instance=project) #使用get_serializer 获取序列化器类
+        #
+        # return Response(serializer.data, status.HTTP_200_OK)
+        return  self.retrieve(request,*args, **kwargs)
 
-        project = self.get_object()  # 使用get_object()不需要自定义
+    def put(self, request, *args, **kwargs):
 
-        """
-         1.通过模型类对象（或者查询集），传给Instance可进行序列化操作
-         2.通过序列化serializer对象data属性，就可以获取转换之后的字典
-        """
-        serializer = self.get_serializer(instance=project) #使用get_serializer 获取序列化器类
+        # project = self.get_object()
+        # serializer = self.get_serializer(instance=project, data=request.data)
+        # try:
+        #     serializer.is_valid(raise_exception=True)
+        # except Exception as e:
+        #     return Response(serializer.errors, safe=True)
+        #
+        # serializer.save()
+        #
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return  self.update(request, *args, **kwargs)
 
-        return Response(serializer.data, status.HTTP_200_OK)
 
-    def put(self, request, pk):
+    def delete(self, request, *args, **kwargs):
 
-        project = self.get_object()
-        serializer = self.get_serializer(instance=project, data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except Exception as e:
-            return Response(serializer.errors, safe=True)
-
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, pk):
-
-        project = self.get_object()
-        project.delete()
-        return Response(data=None, status=204)
+        # project = self.get_object()
+        # project.delete()
+        # return Response(data=None, status=204)
+        return self.destroy(request, *args, **kwargs)
 
 
 # 使用序列化器创建的类
