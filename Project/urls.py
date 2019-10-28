@@ -21,7 +21,7 @@ urlpatterns = [
     # path('<int:pk>/',views.Indexview.as_view()),
     # path('study',views.studyview.as_view()),
     path('',views.ProjectsView.as_view()),
-    path('project/',views.ProjrctViewserializers.as_view()), #序列换器
+    # path('project/',views.ProjrctViewserializers.as_view()), #序列换器
     path('project/<int:pk>/',views.ProjrctView2.as_view()),
-    path('project1/<int:pk>',views.ProjrctViewserializers2.as_view()), #序列化器
+    # path('project1/<int:pk>',views.ProjectSerializer.as_view()), #序列化器
 ]

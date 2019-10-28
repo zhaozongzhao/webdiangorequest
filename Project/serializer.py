@@ -90,7 +90,7 @@ class ProjectModelSerializer(serializers.ModelSerializer):
     [UniqueValidator(queryset=Projects.objects.all(), message='项目名不能重复'), is_unique_project_name])
 
     #父表反向指定子表(父表默认不会生成关联字段（从表），可以手动指定，子表名默认 子表模型类名小写_set)
-    Project2s_set = serializers.StringRelatedField(many=True)
+    # Project2s_set = serializers.StringRelatedField(many=True)
     # 指定参考哪一个模型类
     class Meta:
         #指定模型类

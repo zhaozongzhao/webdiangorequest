@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     # 子应用名。apps.子应用名首字母大写加Config
     'Project.apps.ProjectConfig',
     'Project2.apps.Project2Config',
-    'rest_framework'
+    'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#DRF框架指定默认的渲染类 放在REFT_PRAMEWORK这个字典中
+REST_FRAMEWORK = {
+    #响应渲染类
+    'DEFAULT_RENDERER_CLASSES' : (
+        #设置JSON为第一优选
+        'rest_framework.renderers.JSONRenderer',
+
+        #可浏览的API渲染器为第二优选
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        # 'rest_',
+
+    ),
+     #设置全局排序
+    'DEFAULT_FILTER_BACKENDS':[
+        'rest_framework.filters.OrderingFilter',#排序
+        'django_filters.rest_framework.backends.DjangoFilterBackend',#过滤
+    ],
+     #设置全局分页
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS':"utils.pagination.PageNumberPaginationManul",
+     #必须指定每一页显示的数量
+    # 'PAGE_SIZE' : 5,
+}

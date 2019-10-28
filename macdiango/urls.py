@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', include('Project.urls')),
     path('study/',include('Project.urls')),
-    path('in/',include('Project2.urls'))
+    path('in/',include('Project2.urls')),
+    #返回接口视图
+    path('api/',include('rest_framework.urls'))
 
 ]
