@@ -1,9 +1,8 @@
-
 from django.urls import path
 from Project.views import index
 from Project import views
 
-#子路由配置信息
+# 子路由配置信息
 # 每一个应用（模块）都会维护一个子路由（当前的应用路由信息）
 # urlpatterns为固定名称的列表
 # 列表中的一个元素，就代表一条路由
@@ -15,13 +14,24 @@ urlpatterns = [
     # 如果为类视图,path第二个参数为类视图名
     # path('index',views.Indexview.as_view()),
 
-    #int 为路径参数转化器
+    # int 为路径参数转化器
     #:左边为转化器，右边为参数别名
     # int,slug,uuid
     # path('<int:pk>/',views.Indexview.as_view()),
     # path('study',views.studyview.as_view()),
-    path('',views.ProjectsView.as_view()),
+    path('', views.ProjectsView.as_view()),
     # path('project/',views.ProjrctViewserializers.as_view()), #序列换器
-    path('project/<int:pk>/',views.ProjrctView2.as_view()),
+    path('project/<int:pk>/', views.ProjrctView2.as_view()),
     # path('project1/<int:pk>',views.ProjectSerializer.as_view()), #序列化器
+    path('projectset/', views.projectViewset.as_view({
+
+        'get': 'list',
+        'post': 'create',
+    })),
+    path('projectset/<int:pk>/', views.projectViewset.as_view({
+
+        'get': 'retrieve',
+        'put': 'update',
+        'delete': 'destroy',
+    }))
 ]

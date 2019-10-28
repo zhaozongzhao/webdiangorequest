@@ -13,11 +13,12 @@ import json
 from Project.models import Projects, Person
 # 导入序列化器
 from Project.serializer import ProjectSerializer, ProjectModelSerializer
-#导入过滤引擎
+# 导入过滤引擎
 from django_filters.rest_framework import DjangoFilterBackend
-#优化
+# 优化
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import viewsets
 
 
 # Create your views here.
@@ -249,43 +250,79 @@ class studyview(View):
         return HttpResponse('<h1>星星<h1>')
 
 
-class ProjectsView(generics.ListCreateAPIView,GenericAPIView):
-
-
+class ProjectsView(generics.ListCreateAPIView, GenericAPIView):
     # 指定查询集合（所有的查询数据）
     queryset = Projects.objects.all()
     # 指定序列化器
     serializer_class = ProjectModelSerializer
     # 在视图类中指定过滤引擎（可以指定多个过滤器） OrderingFilter排序过滤器  DjangoFilterBackend(筛选)
-    filter_backends = [filters.OrderingFilter,DjangoFilterBackend]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     # 对特定字段进行排序,指定排序的字段
     ordering_fields = ['name', 'leader']
-    #对特定的筛选字段
+    # 对特定的筛选字段
     filterset_fields = ['name', 'leader']
 
 
-
-
 # 需要继承GenericAPIView
-class ProjrctView2(generics.RetrieveUpdateDestroyAPIView,GenericAPIView):
+class ProjrctView2(generics.RetrieveUpdateDestroyAPIView, GenericAPIView):
     # 必须指定queryset和serializer_class
 
     queryset = Projects.objects.all()  # 用于指定需要使用的查询集
 
     serializer_class = ProjectModelSerializer  # 用于指定用到的序列化器类
 
-    filter_backends = [filters.OrderingFilter] #指定排序过滤引擎
+    filter_backends = [filters.OrderingFilter]  # 指定排序过滤引擎
 
-
-    #如果使用不是pk可以自定义lookup_field，可以修改
+    # 如果使用不是pk可以自定义lookup_field，可以修改
     # lookup_field = 'id'
 
 
+# vieset类不在支持get,post，put,delete等方法，而只支持请求action动作
+#但是vieset未提供get_serializer，filter_queryset，get_object()
+#所以继承了GenericViewSet
+class projectViewset(viewsets.GenericViewSet):
+    # 指定查询集合（所有的查询数据）
+    queryset = Projects.objects.all()
+    # 指定序列化器
+    serializer_class = ProjectModelSerializer
+    # 在视图类中指定过滤引擎（可以指定多个过滤器） OrderingFilter排序过滤器  DjangoFilterBackend(筛选)
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    # 对特定字段进行排序,指定排序的字段
+    ordering_fields = ['name', 'leader']
+    # 对特定的筛选字段
+    filterset_fields = ['name', 'leader']
 
-# 使用序列化器创建的类
-class ProjrctViewserializers(View):
-    pass
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-class ProjrctViewserializers2(View):
-    pass
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
