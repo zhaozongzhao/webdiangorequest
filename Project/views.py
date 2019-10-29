@@ -11,14 +11,18 @@ from rest_framework import filters
 import json
 # 导入模型类
 from Project.models import Projects, Person
+from Project2.models import Project2s
 # 导入序列化器
-from Project.serializer import ProjectSerializer, ProjectModelSerializer
+from Project.serializer import ProjectSerializer, ProjectModelSerializer, \
+    ProjectNameSerializer,InterfaceByIDSerializer,Project2Serializer
+
 # 导入过滤引擎
 from django_filters.rest_framework import DjangoFilterBackend
 # 优化
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework.decorators import action
 
 
 # Create your views here.
@@ -278,8 +282,8 @@ class ProjrctView2(generics.RetrieveUpdateDestroyAPIView, GenericAPIView):
 
 
 # vieset类不在支持get,post，put,delete等方法，而只支持请求action动作
-#但是vieset未提供get_serializer，filter_queryset，get_object()
-#所以继承了GenericViewSet
+# 但是vieset未提供get_serializer，filter_queryset，get_object()
+# 所以继承了GenericViewSet
 class projectViewset(viewsets.ModelViewSet):
     # 指定查询集合（所有的查询数据）
     queryset = Projects.objects.all()
@@ -326,3 +330,31 @@ class projectViewset(viewsets.ModelViewSet):
     #     instance = self.get_object()
     #     instance.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+    #获取项目名称
+    @action(methods=['get'], detail=False)
+    def names(self, request, *args, **kwargs):
+        # 方法一 返回项目名列表
+        # queryset = self.filter_queryset(self.get_queryset())
+        # serializer = self.get_serializer(queryset, many=True)
+        # list = []
+        #
+        # for i in serializer.data:
+        #     list.append(i['name'])
+        # return Response(list)
+        #
+        # 方法二 使用校验器
+        queryset = self.get_queryset()
+        #使用自定义的序列化器实现
+        serializer = ProjectNameSerializer(instance=queryset,many=True)
+        return Response(serializer.data)
+
+
+    #获取项目下的接口
+    @action(detail=True)
+    def interface(self,request, *args,**kwargs):
+
+        instance = self.get_object()
+        serializer = InterfaceByIDSerializer(instance=instance)
+        return Response(serializer.data)
+
