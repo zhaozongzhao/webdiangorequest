@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     # 子应用名。apps.子应用名首字母大写加Config
     'Project.apps.ProjectConfig',
     'Project2.apps.Project2Config',
+    #三方模块
     'rest_framework',
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -152,4 +154,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':"utils.pagination.PageNumberPaginationManul",
      #必须指定每一页显示的数量
     # 'PAGE_SIZE' : 5,
+
+    # 指定用于支持coreapi的Schema
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+
 }

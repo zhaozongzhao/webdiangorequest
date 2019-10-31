@@ -19,18 +19,18 @@ router.register('project',views.projectViewset)
 
 urlpatterns = [
     # path('', index),
-    # 如果为类视图,path第二个参数为类视图名
+    # # 如果为类视图,path第二个参数为类视图名
     # path('index',views.Indexview.as_view()),
-
-    # int 为路径参数转化器
-    #:左边为转化器，右边为参数别名
-    # int,slug,uuid
+    #
+    # # int 为路径参数转化器
+    # # :左边为转化器，右边为参数别名
+    # # int,slug,uuid
     # path('<int:pk>/',views.Indexview.as_view()),
     # path('study',views.studyview.as_view()),
     # path('', views.ProjectsView.as_view()),
     # # path('project/',views.ProjrctViewserializers.as_view()), #序列换器
     # path('project/<int:pk>/', views.ProjrctView2.as_view()),
-    # # path('project1/<int:pk>',views.ProjectSerializer.as_view()), #序列化器
+    # path('project1/<int:pk>',views.ProjectSerializer.as_view()), #序列化器
     # path('projectset/', views.projectViewset.as_view({
     #
     #     'get': 'list',

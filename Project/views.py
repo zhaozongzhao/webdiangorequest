@@ -285,6 +285,31 @@ class ProjrctView2(generics.RetrieveUpdateDestroyAPIView, GenericAPIView):
 # 但是vieset未提供get_serializer，filter_queryset，get_object()
 # 所以继承了GenericViewSet
 class projectViewset(viewsets.ModelViewSet):
+    """
+           create:
+           创建项目
+
+           retrieve:
+           获取项目详情数据
+
+           update:
+           完整更新项目
+
+           partial_update:
+           部分更新项目
+
+           destroy:
+           删除项目
+
+           list:
+           获取项目列表数据
+
+           names:
+           获取所有项目名称
+
+           interfaces:
+           获取指定项目的所有接口数据
+    """
     # 指定查询集合（所有的查询数据）
     queryset = Projects.objects.all()
     # 指定序列化器
