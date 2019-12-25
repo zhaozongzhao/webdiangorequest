@@ -23,6 +23,7 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework import permissions
 
 
 # Create your views here.
@@ -279,7 +280,7 @@ class ProjrctView2(generics.RetrieveUpdateDestroyAPIView, GenericAPIView):
 
     # 如果使用不是pk可以自定义lookup_field，可以修改
     # lookup_field = 'id'
-
+    permission_classes = [permissions.IsAuthenticated]
 
 # vieset类不在支持get,post，put,delete等方法，而只支持请求action动作
 # 但是vieset未提供get_serializer，filter_queryset，get_object()
@@ -320,6 +321,10 @@ class projectViewset(viewsets.ModelViewSet):
     ordering_fields = ['name', 'leader']
     # 对特定的筛选字段
     filterset_fields = ['name', 'leader']
+
+    #设置访问权限，只有登陆用户才能访问
+    permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [rest_framework_jwt.authentication.JSONWebTokenAuthentication]
 
     # def create(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(data=request.data)

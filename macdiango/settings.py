@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
+# import rest_framework_jwt
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +26,7 @@ SECRET_KEY = ')^qe$b&wm^a-h#a+d=s5gszfgdy5l^%#r%r!q36+6t836r*)vl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     # 子应用名。apps.子应用名首字母大写加Config
     'Project.apps.ProjectConfig',
     'Project2.apps.Project2Config',
+    'user.apps.UserConfig',
     #三方模块
     'rest_framework',
     'django_filters',
@@ -132,6 +135,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+JWT_AUTH = {
+
+    #默认5分钟过期，设置过期时间为1天
+    'JWT_EXPIRATION_DELTA' : datetime.timedelta(days=1),
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+    'utils.jwt_handler.jwt_response_payload_handler',
+}
+
 #DRF框架指定默认的渲染类 放在REFT_PRAMEWORK这个字典中
 REST_FRAMEWORK = {
     #响应渲染类
@@ -158,4 +170,54 @@ REST_FRAMEWORK = {
     # 指定用于支持coreapi的Schema
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 
+    #添加JWT认证
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        #默认首先token认证
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+
+
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - [%(levelname)s] - [msg]%(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s - [%(levelname)s] - %(name)s - [msg]%(message)s - [%(filename)s:%(lineno)d ]'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, "logs/mytest.log"),  # 日志文件的位置
+            'maxBytes': 100 * 1024 * 1024,
+            'backupCount': 10,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'mytest': {  # 定义了一个名为mytest的日志器
+            'handlers': ['console', 'file'],
+            'propagate': True,
+            'level': 'DEBUG',  # 日志器接收的最低日志级别
+        },
+    }
 }
